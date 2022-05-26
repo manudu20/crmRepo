@@ -1,7 +1,5 @@
 import psycopg2
-import pandas as pd
 import csv
-
 try:
     connection = psycopg2.connect(user="cms",
                                   password="cms123",
@@ -11,29 +9,26 @@ try:
     cursor = connection.cursor()
     sql = "select id,author,published_on,blog_text,created_on,created_month from cms.cms_view"
 
-    df = pd.read_sql_query(sql,connection)
+    cursor.execute(sql)
+    data = cursor.fetchall()
+    for row in data:
+        basefilename = row[1] + '-' + str(row[5])
+        file = open('/result/' + str(basefilename) + '-' + 'Published-blogs' + '.csv' ,'w')
+        w = csv.writer(file)
+        w.writerow([row[0],row[1],row[2],row[3],row[4]])
+        file.close()
 
-    for index,row in df.iterrows():
-        filename1 = row['author'] + '-' + str(row['created_month']) + '-' + 'Published-blogs' + '.csv'
-        filename2 = row['author'] + '-' + str(row['created_month']) + '-' + 'Draft-blogs' + '.csv'
-
-        file1 = open(str(filename1),'w')
-        w = csv.writer('/result/' + file1)
-        w.writerow([row['id'],row['author'],row['published_on'],row['blog_text'],row['created_on']])
+        file1 = open('/result/' + str(basefilename) + '-' + 'Draft-blogs' + '.csv' ,'w')
+        w = csv.writer(file1)
+        w.writerow([row[0],row[1],row[2],row[3],row[4]])
         file1.close()
 
-        file2 = open('/result/' + str(filename2),'w')
-        w = csv.writer(file2)
-        w.writerow([row['id'],row['author'],row['published_on'],row['blog_text'],row['created_on']])
-        file2.close()
-
 except (Exception, psycopg2.Error) as error:
-        print("Error while fetching data from PostgreSQL", error)
+    print("Error while fetching data from PostgreSQL", error)
 
 finally:
-        # closing database connection.
-        if connection:
+    # closing database connection.
+    if connection:
         cursor.close()
         connection.close()
         print("PostgreSQL connection is closed")
-
