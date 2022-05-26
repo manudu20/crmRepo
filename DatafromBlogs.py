@@ -1,13 +1,30 @@
 import psycopg2
 import csv
+import configparser
+
+config = configparser.ConfigParser()
 try:
-    connection = psycopg2.connect(user="cms",
-                                  password="cms123",
-                                  host="172.18.0.4",
-                                  port="5432",
-                                  database="admin")
+    config.read('config.ini')
+except Exception as e:
+    print('can not read config.ini file '+str(e))
+    sys.exit()
+
+#read config files
+postgreDBUser = config['POSTGREDBCONFIG']['postgreDBUser']
+postgreDBpwd = config['POSTGREDBCONFIG']['postgreDBpwd']
+postgreDBhostIP = config['POSTGREDBCONFIG']['postgreDBhostIP']
+postgreDBport = config['POSTGREDBCONFIG']['postgreDBport']
+postgreDBDB = config['POSTGREDBCONFIG']['postgreDBDB']
+sqlQuery  = config['POSTGREDBCONFIG']['sqlQuery']
+
+try:
+    connection = psycopg2.connect(user=postgreDBUser,
+                                  password=postgreDBpwd,
+                                  host=postgreDBhostIP,
+                                  port=postgreDBport,
+                                  database=postgreDBDB)
     cursor = connection.cursor()
-    sql = "select id,author,published_on,blog_text,created_on,created_month from cms.cms_view"
+    sql = sqlQuery
 
     cursor.execute(sql)
     data = cursor.fetchall()
