@@ -2,6 +2,7 @@ import psycopg2
 import csv
 import configparser
 
+#Initilize config session
 config = configparser.ConfigParser()
 try:
     config.read('config.ini')
@@ -17,6 +18,7 @@ postgreDBport = config['POSTGREDBCONFIG']['postgreDBport']
 postgreDBDB = config['POSTGREDBCONFIG']['postgreDBDB']
 sqlQuery  = config['POSTGREDBCONFIG']['sqlQuery']
 
+#connect to postgresql DB
 try:
     connection = psycopg2.connect(user=postgreDBUser,
                                   password=postgreDBpwd,
@@ -25,7 +27,8 @@ try:
                                   database=postgreDBDB)
     cursor = connection.cursor()
     sql = sqlQuery
-
+    
+    #execute sql query and make csv file for each record
     cursor.execute(sql)
     data = cursor.fetchall()
     for row in data:
