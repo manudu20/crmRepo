@@ -1,0 +1,49 @@
+######################################################################################################################################
+#postgresql db view result
+
+######################################################################################################################################
+admin=# CREATE VIEW cms_view AS
+admin-# SELECT id,AUTHOR,PUBLISHED_ON,BLOG_TEXT,CREATED_ON,extract(month from CREATED_ON) created_month
+admin-# FROM cms.Blogs;
+CREATE VIEW
+admin=# select * from cms_view;
+ id |    author    |    published_on     |      blog_text       |     created_on      | created_month
+----+--------------+---------------------+----------------------+---------------------+---------------
+  1 | Holly Lisle  | 2021-10-01 00:00:00 | Pocket Full of Words | 2021-01-01 00:00:00 |             1
+  2 | Lee Goldberg | 2021-10-03 00:00:00 | A Writer Life        | 2021-10-03 00:00:00 |            10
+  3 | Lee Goldberg | 2022-05-25 00:00:00 | Pocket Full          | 2022-05-25 00:00:00 |             5
+(3 rows)
+
+######################################################################################################################################
+#Python result
+######################################################################################################################################
+[ec2-user@ip-172-31-16-187 ~]$ docker ps -a
+CONTAINER ID   IMAGE               COMMAND                  CREATED       STATUS                      PORTS                                       NAMES
+3b22c35ec956   postgres            "docker-entrypoint.s"   3 hours ago   Up 3 hours                  0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   pgs2
+260451cc3090   python:3.8.3-slim   "sh"                     3 hours ago   Exited (0) 12 minutes ago                                               pyimg
+[ec2-user@ip-172-31-16-187 ~]$
+[ec2-user@ip-172-31-16-187 ~]$ docker start 260451cc3090
+^[[A260451cc3090
+[ec2-user@ip-172-31-16-187 ~]$ docker attach 260451cc3090
+
+# ls
+bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  result  root  run  sbin  srv  sys  tmp  usr  var
+# cd /result
+# ls-ltr
+sh: 4: ls-ltr: not found
+# ls -ltr
+total 24
+-rw-r--r-- 1 root root 68 May 25 23:13 'Lee Goldberg-5.0-Published-blogs.csv'
+-rw-r--r-- 1 root root 70 May 25 23:13 'Lee Goldberg-10.0-Published-blogs.csv'
+-rw-r--r-- 1 root root 70 May 25 23:13 'Lee Goldberg-10.0-Draft-blogs.csv'
+-rw-r--r-- 1 root root 76 May 25 23:13 'Holly Lisle-1.0-Published-blogs.csv'
+-rw-r--r-- 1 root root 76 May 25 23:13 'Holly Lisle-1.0-Draft-blogs.csv'
+-rw-r--r-- 1 root root 68 May 25 23:13 'Lee Goldberg-5.0-Draft-blogs.csv'
+#
+#
+# cat 'Lee Goldberg-5.0-Published-blogs.csv'
+3,Lee Goldberg,2022-05-25 00:00:00,Pocket Full,2022-05-25 00:00:00
+#
+# cat 'Holly Lisle-1.0-Draft-blogs.csv'
+1,Holly Lisle,2021-10-01 00:00:00,Pocket Full of Words,2021-01-01 00:00:00
+#

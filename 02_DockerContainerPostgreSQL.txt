@@ -1,0 +1,39 @@
+#create a new network "cms" on docker
+docker network create cms
+
+#Create a image and a container pgs2 for postgresql on network cms and postgresql credentials
+docker run --name pgs2 --network=cms -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=L0nd0neye -d -p 5432:5432 postgres
+
+#connect to pgs2 container
+docker ps -a
+
+#start pgs2 container
+docker start 260451cc3090
+
+#enter into the pgs2 container
+docker exec -it 260451cc3090 bash
+
+#connect to psql cient in pgs2 container, enter the password set in container creation
+psql -h localhost -p 5432 -U admin -W
+
+#create a user 
+create user cms with password 'cms123';
+
+#create schema cms
+CREATE SCHEMA CMS;
+
+#create table Blogs
+create table cms.Blogs(ID SERIAL PRIMARY KEY, AUTHOR VARCHAR(200) NOT NULL,PUBLISHED_ON TIMESTAMP NOT NULL,BLOG_TEXT VARCHAR(500) NOT NULL,CREATED_ON TIMESTAMP );
+
+#insert records in Blogs
+insert into cms.Blogs(id,AUTHOR,PUBLISHED_ON,BLOG_TEXT,CREATED_ON) values (1, 'Holly Lisle','10-01-2021','Pocket Full of Words','01-01-2021');
+insert into cms.Blogs(id,AUTHOR,PUBLISHED_ON,BLOG_TEXT,CREATED_ON) values (2, 'Lee Goldberg','10-03-2021','A Writer Life','10-03-2021');
+insert into cms.Blogs(id,AUTHOR,PUBLISHED_ON,BLOG_TEXT,CREATED_ON) values (3, 'Lee Goldberg',current_date,'Pocket Full',current_date);
+
+#create view with created_month column
+CREATE VIEW cms.cms_view AS
+SELECT id,AUTHOR,PUBLISHED_ON,BLOG_TEXT,CREATED_ON,extract(month from CREATED_ON) created_month
+FROM cms.Blogs;
+
+#grant privileges on view to user cms
+GRANT SELECT ON cms.cms_view TO cms ;

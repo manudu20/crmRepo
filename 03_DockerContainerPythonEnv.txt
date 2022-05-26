@@ -1,0 +1,23 @@
+#Create a image and a container pyimg on network cms for python environment with volume /result
+docker run -it --name=pyimg -v result --network=cms python:3.8.3-slim  sh
+
+#connect to pyimg container
+docker ps -a
+
+#start pyimg container
+docker start 260451cc3090
+
+#enter into the pyimg container
+docker exec -it 260451cc3090 bash
+
+#Install dependent Python librarires
+apt-get -y install vim
+apt-get -y install libpq-dev gcc
+pip install psycopg2	
+pip install pandas
+
+#create a DatafromBlogs.py (as in git)
+#to connect with postgresql db , fetch the result from view and write a sepereate csv file for each record
+
+#run the pythin script in python shell
+python3 DatafromBlogs.py

@@ -1,0 +1,14 @@
+#
+The Lab to setup Postgresql DB and Python environment has been setup on EC2 Instance with Linux image
+
+#Launch a EC2 Instance with pem key and a ppublic IP to make ssh connection from local machine
+
+#Install Docker
+sudo yum update -y
+sudo yum install -y docker
+sudo service docker start
+sudo usermod -a -G docker ec2-user
+docker info
+
+#Install git
+sudo yum install git -y
