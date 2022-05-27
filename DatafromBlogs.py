@@ -1,6 +1,7 @@
 import psycopg2
 import csv
 import configparser
+import sys
 
 #Initilize config session
 config = configparser.ConfigParser()
@@ -27,9 +28,9 @@ try:
                                   database=postgreDBDB)
     cursor = connection.cursor()
     sql = sqlQuery
-    
     #execute sql query and make csv file for each record
     cursor.execute(sql)
+
     data = cursor.fetchall()
     for row in data:
         basefilename = row[1] + '-' + str(row[5])
@@ -37,11 +38,12 @@ try:
         w = csv.writer(file)
         w.writerow([row[0],row[1],row[2],row[3],row[4]])
         file.close()
-
+        
         file1 = open('/result/' + str(basefilename) + '-' + 'Draft-blogs' + '.csv' ,'w')
         w = csv.writer(file1)
         w.writerow([row[0],row[1],row[2],row[3],row[4]])
         file1.close()
+
 
 except (Exception, psycopg2.Error) as error:
     print("Error while fetching data from PostgreSQL", error)
